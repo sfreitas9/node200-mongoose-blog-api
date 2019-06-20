@@ -4,7 +4,7 @@ module.exports = function createModelExpectations (expect, u, expectedModel) {
         .forEach(function (key) {
             switch (typeof expectedModel[key]) {
                 case 'function':
-                    expect(u[key]).to.be.instanceOf(expectedModel[key]);
+                    expect(u[key]).to.be.instanceOf(expectedModel[key]);  
                     break;
                 case 'object':
                     createModelExpectations(expect, u[key], expectedModel[key]);

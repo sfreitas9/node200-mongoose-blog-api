@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../../server/models/User');
 const Blog = require('../../server/models/Blog');
+const Comment = require('../../server/models/Comment');
 
 mongoose.models = {};
 mongoose.modelSchemas = {};
@@ -14,6 +15,11 @@ const fakeUser = {
         linkedIn: 'https://www.linkedin.com/in/johnsmith',
         facebook: 'john.smith'
     }
+};
+const fakeUser2 = {
+  firstName: 'Sally',
+  lastName: 'Ride',
+  email: 'sally.ride@gmail.com',
 };
 
 const fakeBlogs = [{
@@ -32,9 +38,19 @@ const fakeBlogs = [{
     featured: true
 }];
 
+const fakeComments = [{
+  comment: `Hello World apps are awesome!`,
+  date: Date.now(),
+}, {
+  comment: `Yaks are tedious`,
+  date: Date.now(),
+}];
+
+
 const nonExistentObjectId = '507f191e810c19729de860ea';
 
 const createUserInDB = () => new User(fakeUser).save();
+
 const createBlogInDB = (author) => {
     const newBlog = new Blog(fakeBlogs[0]);
 
@@ -44,17 +60,36 @@ const createBlogInDB = (author) => {
         .save()
         .then(blog => {
             author.blogs.push(blog);
-
             author.save();
-
             return blog;
         })
+}
+const createCommentInDB = (blog) => {
+  const newComment = new Comment(fakeComments[0]);
+  const author = new User(fakeUser2);
+
+  newComment.author = author;
+  newComment.blog = blog;
+
+  return newComment
+      .save()
+      .then(comment => {
+          author.comments.push(comment);
+          author.save();
+
+          blog.comments.push(comment);
+          blog.save();
+
+          return comment;
+      })
 }
 
 module.exports = {
     fakeUser,
     fakeBlogs,
+    fakeComments,
     nonExistentObjectId,
     createUserInDB,
     createBlogInDB,
+    createCommentInDB
 };
